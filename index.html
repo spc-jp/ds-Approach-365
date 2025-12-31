@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>アプローチ距離感365</title>
+    <style>
+        :root {
+            --primary-color: #39C701; /* 指定の明るいグリーン */
+            --primary-light: #EAFAE0; /* メインカラーに合わせた薄い明るい緑 */
+            --accent-color: #FF8F00; /* 視認性の高いオレンジ */
+            --text-main: #212121;
+            --text-sub: #616161;
+            --bg-color: #FAFAFA;
+            --card-bg: #FFFFFF;
+            --border-color: #E0E0E0;
+            --danger-color: #D32F2F;
+            --info-color: #1976D2;
+            --font-base: 18px;
+            
+            /* 背景用グラデーション色 */
+            --grad-start: #FFFFFF;
+            --grad-end: #F1F8E9; /* 極薄い緑 */
+        }
+
+        /* ダークモード対応 */
+        [data-theme="dark"] {
+            --primary-color: #4BD415;
+            --primary-light: #183305;
+            --accent-color: #FFA000;
+            --text-main: #EEEEEE;
+            --text-sub: #BDBDBD;
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --border-color: #424242;
+            --info-color: #64B5F6;
+            
+            --grad-start: #1E1E1E;
+            --grad-end: #1B2E1E; /* 暗い緑 */
+        }
+
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            font-size: var(--font-base);
+            line-height: 1.5;
+            padding-bottom: 100px; /* フッター分 */
+        }
+
+        /* ヘッダー */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            height: 70px;
+        }
+
+        /* アニメーション用コンテナ */
+        .header-anim-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        /* ピン（旗） */
+        .anim-pin {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-2px);
+            width: 4px;
+            height: 55px;
+            background-color: #FFF;
+            z-index: 1;
+        }
+        .anim-flag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 20px solid #FF0000;
+        }
+        .anim-hole {
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 6px;
+            background-color: rgba(0,0,0,0.4);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        /* ゴルフボール */
+        .anim-ball {
+            position: absolute;
+            bottom: 5px;
+            left: -20px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 2;
+            animation: approachShot 8s infinite ease-in-out;
+        }
+
+        @keyframes approachShot {
+            0% { left: -20px; bottom: 5px; transform: scale(1); }
+            10% { left: 5%; bottom: 5px; }
+            25% { left: 5%; bottom: 5px; }
+            50% { left: 25%; bottom: 40px; animation-timing-function: ease-in; }
+            75% { left: 42%; bottom: 5px; }
+            88% { left: 50%; bottom: 5px; opacity: 1; }
+            90% { left: 50%; bottom: 3px; opacity: 0; }
+            100% { left: 50%; bottom: 3px; opacity: 0; }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-sub {
+            font-size: 12px;
+            opacity: 0.95;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .icon-btn-sm {
+            font-size: 20px;
+        }
+        
+        .icon-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        /* 振り幅セレクター */
+        .swing-selector {
+            background-color: var(--card-bg);
+            padding: 12px 8px;
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 70px;
+            z-index: 90;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .swing-btn {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            padding: 8px 20px;
+            border-radius: 24px;
+            font-size: 16px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .swing-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* メインコンテンツ */
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* カードデザイン刷新 */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 8px 16px;
+            background-color: rgba(0,0,0,0.03);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .club-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .club-note {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        /* 左右分割レイアウト（均等サイズ・背景変更版） */
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr; /* 完全に1:1 */
+            align-items: stretch;
+        }
+        
+        /* 境界線 */
+        .split-divider {
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* 左側（基準）: 少しグレーアウトさせて比較対象感を出す */
+        .split-left {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color); /* 少しグレー */
+            color: var(--text-sub);
+        }
+        
+        /* 右側（練習）: 薄いグラデーションで「今ここ」感を出す */
+        .split-right {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, var(--grad-start), var(--grad-end));
+            position: relative;
+        }
+
+        .label-sm {
+            font-size: 12px;
+            font-weight: bold; /* ラベルも太く */
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            display: block;
+            text-align: center;
+            width: 100%;
+            opacity: 0.9;
+        }
+
+        /* 数値スタイル統一・極太化 */
+        .value-unified {
+            font-size: 38px; /* 38pxに拡大 */
+            font-weight: 900; /* 極太 */
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        
+        /* 左側の数値: 視認性を上げるため濃いめのグレーに */
+        .split-left .value-unified {
+            color: #616161; 
+        }
+        
+        /* 右側の数値: プライマリーカラーで強調 */
+        .split-right .value-unified {
+            color: var(--primary-color);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .unit {
+            font-size: 12px;
+            margin-left: 2px;
+            font-weight: bold;
+        }
+        
+        /* 差分表示 */
+        .diff-indicator {
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            min-width: 40px;
+            text-align: center;
+        }
+        .diff-plus { color: #E65100; background-color: #FFF3E0; }
+        .diff-minus { color: #1565C0; background-color: #E3F2FD; }
+        .diff-zero { color: #9E9E9E; opacity: 0; }
+
+        /* 操作ボタン */
+        .control-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            align-items: center;
+        }
+
+        .btn-adjust {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-adjust:active {
+            background-color: var(--primary-light);
+            border-color: var(--primary-color);
+            transform: translateY(1px);
+        }
+
+        .estimated-badge {
+            display: inline-block;
+            background-color: #FFF3E0;
+            color: #E65100;
+            font-size: 10px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            margin-left: 4px;
+            vertical-align: middle;
+            font-weight: normal;
+        }
+
+        /* フッター */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 12px 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            z-index: 100;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+
+        .footer-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 10px;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .footer-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+        
+        .footer-btn-primary {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* モーダル */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-sub);
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .modal-footer button {
+            flex: 1;
+        }
+
+        .btn-cancel {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .btn-save-record {
+            width: 100%;
+            background-color: var(--info-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary {
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--text-sub);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        textarea.form-control {
+            height: 100px;
+            resize: none;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* ヘルプコンテンツ */
+        .help-section {
+            margin-bottom: 20px;
+        }
+        .help-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+        .help-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* 検索バー */
+        .search-bar {
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            font-size: 16px;
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+        }
+        
+        /* トースト通知 */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 3000;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* 基準データ編集用リスト */
+        .edit-list-header {
+            display: grid;
+            grid-template-columns: 1fr 100px 80px;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: bold;
+            text-align: center;
+        }
+        .edit-row {
+            display: grid;
+            grid-template-columns: 1fr 100px 80px;
+            gap: 8px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+        .edit-club-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+        .edit-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .edit-input-group input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: right;
+            font-size: 16px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+        .edit-ref-value {
+            font-size: 12px;
+            color: var(--text-sub);
+            text-align: center;
+        }
+
+        .tab-group {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tab-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-sub);
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<header>
+    <div class="header-anim-container">
+        <div class="anim-pin">
+            <div class="anim-flag"></div>
+        </div>
+        <div class="anim-hole"></div>
+        <div class="anim-ball"></div>
+    </div>
+
+    <div class="header-content">
+        <h1>アプローチ距離感365</h1>
+        <div class="header-sub" id="headerSub">基準: 58°くるぶし=10yd</div>
+    </div>
+    
+    <div class="header-icons">
+        <button class="icon-btn icon-btn-sm" onclick="openHelp()" title="使い方">
+            ❓
+        </button>
+        <button class="icon-btn" onclick="openSettings()" title="設定">
+            ⚙️
+        </button>
+    </div>
+</header>
+
+<!-- 振り幅選択 -->
+<div class="swing-selector" id="swingSelector"></div>
+
+<!-- メインコンテンツ -->
+<div class="container">
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="番手を検索 (例: 58, 7i)" onkeyup="filterClubs()">
+    </div>
+    <div id="distanceList"></div>
+</div>
+
+<!-- フッター -->
+<footer>
+    <button class="footer-btn" onclick="openMemo()">
+        <svg viewBox="0 0 24 24"><path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/></svg>
+        今日のメモ
+    </button>
+    <button class="footer-btn footer-btn-primary" onclick="updateStandardFromCurrent()">
+        <!-- 更新/保存アイコン -->
+        <svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+        基準を更新
+    </button>
+    <button class="footer-btn" onclick="confirmResetCheck()">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        リセット
+    </button>
+</footer>
+
+<!-- 使い方モーダル -->
+<div id="helpModal" class="modal-overlay" onclick="closeModal(event, 'helpModal')">
+    <div class="modal">
+        <div class="modal-header">
+            使い方ガイド
+            <button class="modal-close" onclick="closeModal(null, 'helpModal')">×</button>
+        </div>
+        <div class="help-section">
+            <div class="help-title">🎯 目的</div>
+            <div class="help-text">
+                番手と振り幅ごとの距離を整理し、コースでの「迷い」をなくすためのアプリです。<br>
+                58°の「くるぶし＝10yd」を基準に、自分だけの距離感表を育てましょう。
+            </div>
+        </div>
+        <div class="help-section">
+            <div class="help-title">👆 使い方</div>
+            <div class="help-text">
+                1. 画面上部で<b>「振り幅」</b>を選びます。<br>
+                2. <b>左側に「基準」</b>、<b>右側に「練習（現在）」</b>の距離が表示されます。<br>
+                3. 右側の<b>「＋」「ー」ボタン</b>で練習の飛距離を修正します。<br>
+                4. 練習が終わったら、フッターの<b>「基準を更新」</b>ボタンを押します。<br>
+                5. 今日の記録が「新しい基準」として保存されます。
+            </div>
+        </div>
+        <button class="btn-primary" onclick="closeModal(null, 'helpModal')">閉じる</button>
+    </div>
+</div>
+
+<!-- 設定モーダル -->
+<div id="settingsModal" class="modal-overlay" onclick="closeModal(event, 'settingsModal')">
+    <div class="modal">
+        <div class="modal-header">
+            設定
+            <button class="modal-close" onclick="closeModal(null, 'settingsModal')">×</button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">基準データ（比較対象）の管理</label>
+            
+            <button class="btn-secondary" onclick="openEditStandard()">
+                基準データを手動で編集
+            </button>
+            <div style="font-size:12px; color:var(--text-sub); margin-bottom:24px;">
+                過去のベストや想定距離を直接入力して基準にします。
+            </div>
+            
+            <button class="btn-secondary" onclick="calculateStandardCheck()">
+                目安（理論値）に戻す
+            </button>
+            <div style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">
+                迷った時はここから初期の計算値（58°=10yd）にリセットできます。
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">表示テーマ</label>
+            <div class="toggle-row">
+                <span>ダークモード</span>
+                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">表示する番手</label>
+            <div id="clubVisibilitySettings"></div>
+        </div>
+        
+        <button class="btn-primary" onclick="closeModal(null, 'settingsModal')">閉じる</button>
+    </div>
+</div>
+
+<!-- 基準データ編集モーダル -->
+<div id="editStandardModal" class="modal-overlay" onclick="closeModal(event, 'editStandardModal')">
+    <div class="modal">
+        <div class="modal-header">
+            基準データの編集
+            <button class="modal-close" onclick="closeModal(null, 'editStandardModal')">×</button>
+        </div>
+        <div style="font-size:12px; color:var(--text-sub); margin-bottom:16px;">
+            比較の基準となる距離を入力します。<br>
+            右側の「現在値」を参考にしてください。
+        </div>
+        
+        <!-- 振り幅タブ -->
+        <div class="tab-group" id="editStandardTabs"></div>
+
+        <!-- ヘッダー -->
+        <div class="edit-list-header">
+            <div style="text-align:left; padding-left:8px;">番手</div>
+            <div>基準(yd)</div>
+            <div>現在値</div>
+        </div>
+
+        <!-- 入力リスト -->
+        <div id="editStandardList" style="margin-bottom: 24px; max-height: 40vh; overflow-y: auto;"></div>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal(null, 'editStandardModal')">キャンセル</button>
+            <button class="btn-primary" onclick="saveStandardEdit()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- メモモーダル -->
+<div id="memoModal" class="modal-overlay" onclick="closeModal(event, 'memoModal')">
+    <div class="modal">
+        <div class="modal-header">
+            今日のメモ
+            <button class="modal-close" onclick="closeModal(null, 'memoModal')">×</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">日付</label>
+            <input type="date" id="memoDate" class="form-control">
+            
+            <label class="form-label">場所</label>
+            <select id="memoPlace" class="form-control">
+                <option value="練習場">練習場</option>
+                <option value="ゴルフ場">ゴルフ場</option>
+                <option value="ショートコース">ショートコース</option>
+                <option value="自宅">自宅</option>
+                <option value="その他">その他</option>
+            </select>
+            
+            <label class="form-label">気付き・調子など</label>
+            <textarea id="memoText" class="form-control" placeholder="例：今日は全体的に飛びすぎている。芝が薄い。"></textarea>
+        </div>
+        <button class="btn-primary" onclick="saveMemo()">保存する</button>
+        <div style="margin-top:12px; font-size:12px; color:var(--text-sub);">
+            ※前回のメモ: <span id="lastMemoDisplay">なし</span>
+        </div>
+    </div>
+</div>
+
+<!-- 汎用確認モーダル -->
+<div id="confirmModal" class="modal-overlay" onclick="closeModal(event, 'confirmModal')">
+    <div class="modal">
+        <div class="modal-header">
+            <span id="confirmTitle">確認</span>
+            <button class="modal-close" onclick="closeModal(null, 'confirmModal')">×</button>
+        </div>
+        <div id="confirmMessage" class="help-text" style="margin-bottom: 20px;"></div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal(null, 'confirmModal')">キャンセル</button>
+            <button class="btn-primary" id="confirmActionBtn">実行する</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">メッセージ</div>
+
+<script>
+    /** データ構造と初期設定 */
+    const CLUBS = ['58°', '52°', '50°', '48°', 'PW', '9i', '8i', '7i'];
+    const SWINGS = ['くるぶし', 'ひざ', '腰', '3/4', 'フル'];
+    
+    // ベース距離係数
+    const SWING_RATIOS = { 'くるぶし': 1, 'ひざ': 2, '腰': 3.5, '3/4': 6, 'フル': 8 };
+    const CLUB_ADDITIONS = {
+        '58°': 0, '52°': 5, '50°': 10, '48°': 15, 'PW': 25, '9i': 35, '8i': 45, '7i': 55
+    };
+
+    const defaultState = {
+        distances: {}, 
+        savedDistances: {}, // 基準（比較対象）データ
+        savedDate: null, // 基準データの保存日
+        memo: "",
+        memoData: { date: "", place: "練習場", text: "" },
+        activeSwings: 'くるぶし',
+        editingStandardSwing: 'くるぶし',
+        settings: {
+            darkMode: false,
+            visibleClubs: [...CLUBS]
+        }
+    };
+
+    let appState = JSON.parse(JSON.stringify(defaultState));
+
+    function init() {
+        const saved = localStorage.getItem('approach365_data');
+        if (saved) {
+            const loaded = JSON.parse(saved);
+            appState = { ...defaultState, ...loaded };
+            if (!appState.memoData) appState.memoData = { date: getTodayStr(), place: "練習場", text: "" };
+            if (!appState.savedDistances || Object.keys(appState.savedDistances).length === 0) {
+                appState.savedDistances = JSON.parse(JSON.stringify(appState.distances));
+            }
+        } else {
+            calculateAllDistances(true);
+            appState.savedDistances = JSON.parse(JSON.stringify(appState.distances));
+        }
+
+        applyTheme();
+        updateHeaderInfo();
+        renderSwings();
+        renderClubs();
+        renderSettings();
+    }
+
+    function getTodayStr() {
+        return new Date().toISOString().split('T')[0];
+    }
+    
+    // 日付フォーマット (YYYY-MM-DD -> M/D)
+    function formatDateShort(dateStr) {
+        if(!dateStr) return "";
+        const d = new Date(dateStr);
+        if(isNaN(d.getTime())) return "";
+        return `${d.getMonth()+1}/${d.getDate()}`;
+    }
+
+    function updateHeaderInfo() {
+        const sub = document.getElementById('headerSub');
+        let text = "基準: 58°くるぶし=10yd";
+        if (appState.savedDate) {
+            text += ` (${formatDateShort(appState.savedDate)}更新)`;
+        }
+        sub.textContent = text;
+    }
+
+    function calculateAllDistances(forceReset = false) {
+        const baseDist = 10; 
+        CLUBS.forEach(club => {
+            if (!appState.distances[club]) appState.distances[club] = {};
+            SWINGS.forEach(swing => {
+                if (!forceReset && appState.distances[club][swing] && !appState.distances[club][swing].est) return;
+                let estimated = (baseDist * (SWING_RATIOS[swing] / SWING_RATIOS['くるぶし']));
+                const clubAdd = CLUB_ADDITIONS[club];
+                const swingFactor = (SWINGS.indexOf(swing) + 1) / 2; 
+                estimated += (clubAdd * swingFactor * 0.5);
+                estimated = Math.round(estimated / 5) * 5;
+                if (estimated < 5) estimated = 5; 
+                if (club === '58°' && swing === 'くるぶし') estimated = 10;
+                appState.distances[club][swing] = { val: estimated, est: true };
+            });
+        });
+        save();
+    }
+
+    function save() {
+        localStorage.setItem('approach365_data', JSON.stringify(appState));
+    }
+
+    function renderSwings() {
+        const container = document.getElementById('swingSelector');
+        container.innerHTML = SWINGS.map(swing => `
+            <button class="swing-btn ${appState.activeSwings === swing ? 'active' : ''}" 
+                onclick="changeSwing('${swing}')">
+                ${swing}
+            </button>
+        `).join('');
+    }
+
+    function changeSwing(swing) {
+        appState.activeSwings = swing;
+        save();
+        renderSwings();
+        renderClubs();
+    }
+
+    function renderClubs() {
+        const container = document.getElementById('distanceList');
+        const swing = appState.activeSwings;
+        const filter = document.getElementById('searchInput').value.toLowerCase();
+        
+        const visibleClubs = appState.settings.visibleClubs.filter(club => {
+            if (filter && !club.toLowerCase().includes(filter)) return false;
+            return true;
+        });
+
+        if (visibleClubs.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">表示する番手がありません</div>';
+            return;
+        }
+
+        container.innerHTML = visibleClubs.map(club => {
+            const currentData = appState.distances[club][swing];
+            const savedData = appState.savedDistances[club] && appState.savedDistances[club][swing];
+            
+            const baseVal = savedData ? savedData.val : currentData.val;
+            
+            // 差分計算
+            const diff = currentData.val - baseVal;
+            let diffClass = 'diff-zero';
+            let diffText = '±0';
+            if (diff > 0) { diffClass = 'diff-plus'; diffText = `+${diff}`; }
+            else if (diff < 0) { diffClass = 'diff-minus'; diffText = `${diff}`; }
+            
+            return `
+            <div class="card">
+                <div class="card-header">
+                    <div class="club-name">
+                        ${club}
+                        ${currentData.est ? '<span class="estimated-badge">推定</span>' : ''}
+                    </div>
+                    <div class="club-note">${swing}</div>
+                </div>
+                
+                <div class="split-view">
+                    <!-- 左: 基準 (固定/比較対象) -->
+                    <div class="split-left">
+                        <span class="label-sm">基準</span>
+                        <div class="value-unified">${baseVal}<span class="unit">yd</span></div>
+                        <span class="diff-indicator ${diffClass}">${diffText}</span>
+                    </div>
+                    
+                    <div class="split-divider"></div>
+                    
+                    <!-- 右: 練習 (現在/操作対象) -->
+                    <div class="split-right">
+                        <span class="label-sm">練習</span>
+                        <div class="value-unified">${currentData.val}<span class="unit">yd</span></div>
+                        
+                        <div class="control-row">
+                            <button class="btn-adjust" onclick="adjustDistance('${club}', '${swing}', -1)">−</button>
+                            <button class="btn-adjust" onclick="adjustDistance('${club}', '${swing}', 1)">＋</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function filterClubs() { renderClubs(); }
+
+    function adjustDistance(club, swing, delta) {
+        let newVal = appState.distances[club][swing].val + delta;
+        if (newVal < 0) newVal = 0;
+        appState.distances[club][swing] = { val: newVal, est: false };
+        save();
+        renderClubs();
+    }
+    
+    function updateStandardFromCurrent() {
+        showConfirm('基準を更新しますか？', '現在の「練習（右側）」の数値を、新しい「基準（左側）」として保存します。<br>次回の練習は、この数値がスタート地点になります。', function() {
+            appState.savedDistances = JSON.parse(JSON.stringify(appState.distances));
+            appState.savedDate = getTodayStr(); // 更新日を保存
+            save();
+            renderClubs();
+            updateHeaderInfo();
+            showToast('基準を更新しました！');
+        });
+    }
+    
+    function openEditStandard() {
+        appState.editingStandardSwing = SWINGS[0];
+        renderEditStandardTabs();
+        renderEditStandardList();
+        closeModal(null, 'settingsModal');
+        openModal('editStandardModal');
+    }
+    
+    function renderEditStandardTabs() {
+        const container = document.getElementById('editStandardTabs');
+        container.innerHTML = SWINGS.map(swing => `
+            <button class="tab-btn ${appState.editingStandardSwing === swing ? 'active' : ''}" 
+                onclick="changeStandardEditSwing('${swing}')">
+                ${swing}
+            </button>
+        `).join('');
+    }
+    
+    function changeStandardEditSwing(swing) {
+        appState.editingStandardSwing = swing;
+        renderEditStandardTabs();
+        renderEditStandardList();
+    }
+    
+    function renderEditStandardList() {
+        const container = document.getElementById('editStandardList');
+        const swing = appState.editingStandardSwing;
+        const visibleClubs = appState.settings.visibleClubs;
+        
+        container.innerHTML = visibleClubs.map(club => {
+            if (!appState.savedDistances[club]) appState.savedDistances[club] = {};
+            if (!appState.savedDistances[club][swing]) appState.savedDistances[club][swing] = { val: 0, est: false };
+            
+            const stdVal = appState.savedDistances[club][swing].val;
+            const curVal = appState.distances[club][swing] ? appState.distances[club][swing].val : '-';
+            
+            return `
+                <div class="edit-row">
+                    <div class="edit-club-label">${club}</div>
+                    <div class="edit-input-group">
+                        <input type="number" value="${stdVal}" onchange="updateStandardValue('${club}', this.value)">
+                        <span style="margin-left:4px;">yd</span>
+                    </div>
+                    <div class="edit-ref-value">${curVal} yd</div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function updateStandardValue(club, value) {
+        const swing = appState.editingStandardSwing;
+        const numVal = parseInt(value, 10);
+        if (!isNaN(numVal)) {
+            appState.savedDistances[club][swing].val = numVal;
+        }
+    }
+    
+    function saveStandardEdit() {
+        appState.savedDate = getTodayStr(); // 手動編集でも日付更新
+        save();
+        renderClubs();
+        updateHeaderInfo();
+        closeModal(null, 'editStandardModal');
+        showToast('基準データを保存しました');
+    }
+
+    function renderSettings() {
+        document.getElementById('darkModeToggle').checked = appState.settings.darkMode;
+        const container = document.getElementById('clubVisibilitySettings');
+        container.innerHTML = CLUBS.map(club => `
+            <div class="toggle-row">
+                <span>${club}</span>
+                <input type="checkbox" ${appState.settings.visibleClubs.includes(club) ? 'checked' : ''} onchange="toggleClubVisibility('${club}')">
+            </div>
+        `).join('');
+    }
+
+    function toggleDarkMode() {
+        appState.settings.darkMode = !appState.settings.darkMode;
+        applyTheme();
+        save();
+    }
+
+    function applyTheme() {
+        if (appState.settings.darkMode) document.body.setAttribute('data-theme', 'dark');
+        else document.body.removeAttribute('data-theme');
+    }
+
+    function toggleClubVisibility(club) {
+        const list = appState.settings.visibleClubs;
+        if (list.includes(club)) appState.settings.visibleClubs = list.filter(c => c !== club);
+        else {
+            appState.settings.visibleClubs.push(club);
+            appState.settings.visibleClubs.sort((a, b) => CLUBS.indexOf(a) - CLUBS.indexOf(b));
+        }
+        save();
+        renderClubs();
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(event, id) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById(id).style.display = 'none';
+    }
+    function openSettings() { renderSettings(); openModal('settingsModal'); }
+    function openHelp() { openModal('helpModal'); }
+
+    function openMemo() {
+        const today = getTodayStr();
+        const data = appState.memoData || { date: today, place: '練習場', text: '' };
+        document.getElementById('memoDate').value = data.date || today;
+        document.getElementById('memoPlace').value = data.place || '練習場';
+        document.getElementById('memoText').value = data.text || '';
+        document.getElementById('lastMemoDisplay').textContent = appState.memo.length > 20 ? appState.memo.substring(0, 20) + '...' : (appState.memo || 'なし');
+        openModal('memoModal');
+    }
+
+    function saveMemo() {
+        const date = document.getElementById('memoDate').value;
+        const place = document.getElementById('memoPlace').value;
+        const text = document.getElementById('memoText').value;
+        appState.memoData = { date, place, text };
+        appState.memo = `${date} [${place}] ${text}`;
+        save();
+        closeModal(null, 'memoModal');
+        showToast('メモを保存しました');
+    }
+    
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function showConfirm(title, message, callback) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').innerHTML = message;
+        const actionBtn = document.getElementById('confirmActionBtn');
+        const newBtn = actionBtn.cloneNode(true);
+        actionBtn.parentNode.replaceChild(newBtn, actionBtn);
+        newBtn.onclick = function() { callback(); closeModal(null, 'confirmModal'); };
+        openModal('confirmModal');
+    }
+
+    function calculateStandardCheck() {
+        // 設定画面からの呼び出しなのでモーダルを閉じる
+        closeModal(null, 'settingsModal');
+        
+        showConfirm('目安（理論値）に戻しますか？', '「58° くるぶし = 10yd」の理論的な目安値で、現在の数値を上書きリセットします。<br><b style="color:var(--danger-color)">手動で調整した内容は消えます。</b>', function() {
+            calculateAllDistances(true);
+            save();
+            renderClubs();
+            showToast('数値を目安に戻しました');
+        });
+    }
+
+    function confirmResetCheck() {
+        showConfirm('全データを削除しますか？', '保存された距離やメモが全て消え、アプリが初期状態に戻ります。<br><b style="color:var(--danger-color)">この操作は取り消せません。</b>', function() {
+            localStorage.removeItem('approach365_data');
+            location.reload();
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>
